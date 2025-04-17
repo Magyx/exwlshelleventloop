@@ -1,7 +1,7 @@
 use darling::{
-    FromDeriveInput, FromMeta,
     ast::{Data, NestedMeta},
     util::{Flag, Ignored},
+    FromDeriveInput, FromMeta,
 };
 use proc_macro2::TokenStream as TokenStream2;
 use syn::{DeriveInput, Generics, Ident, Variant, Visibility};
@@ -55,7 +55,7 @@ pub fn to_layer_message(attr: TokenStream2, input: TokenStream2) -> manyhow::Res
                 ForgetLastOutput,
             };
             let try_into_impl = quote! {
-                impl #impl_gen TryInto<iced_layershell::actions::LayershellCustomActionsWithId> for #ident #ty_gen #where_gen {
+                impl #impl_gen TryInto<iced_layershell::actions::LayershellCustomActionsWithId> for #ident #generics #where_gen {
                     type Error = Self;
 
                     fn try_into(self) -> Result<iced_layershell::actions::LayershellCustomActionsWithId, Self::Error> {
@@ -83,7 +83,7 @@ pub fn to_layer_message(attr: TokenStream2, input: TokenStream2) -> manyhow::Res
                         }
                     }
                 }
-                impl #ident #ty_gen #where_gen {
+                impl #impl_gen #ident #generics #where_gen {
                     fn layershell_open(settings: iced_layershell::reexport::NewLayerShellSettings) -> (iced::window::Id, Self) {
                         let id = iced::window::Id::unique();
                         (
@@ -127,7 +127,7 @@ pub fn to_layer_message(attr: TokenStream2, input: TokenStream2) -> manyhow::Res
                 },
             };
             let try_into_impl = quote! {
-                impl #impl_gen TryInto<iced_layershell::actions::LayershellCustomActions> for #ident #ty_gen #where_gen {
+                impl #impl_gen TryInto<iced_layershell::actions::LayershellCustomActions> for #ident #generics #where_gen {
                     type Error = Self;
 
                     fn try_into(self) -> Result<iced_layershell::actions::LayershellCustomActions, Self::Error> {
@@ -158,7 +158,7 @@ pub fn to_layer_message(attr: TokenStream2, input: TokenStream2) -> manyhow::Res
 
     Ok(quote! {
         #(#attrs)*
-        #vis enum #ident #ty_gen #where_gen {
+        #vis enum #ident #generics #where_gen {
             #(#variants,)*
             #additional_variants
         }
